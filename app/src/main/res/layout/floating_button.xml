@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blueLight"
+    android:id="@+id/layout"
+
+
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+    android:theme="@style/customTheme">
+
+    <LinearLayout
+        android:id="@+id/ll_action_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="Actions"
+            app:srcCompat="@drawable/plus"
+
+            />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_alarm_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/blueLight"
+            app:fabSize="normal"
+
+            app:srcCompat="@drawable/ic_brush" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_person_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/blueLight"
+
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_alarm_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_alarm_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_alarm_fab"
+            app:srcCompat="@drawable/color_palette" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_pick_sharp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/pink"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_person_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_person_fab"
+            app:srcCompat="@drawable/interests" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_erase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/red"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_person_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_person_fab"
+            app:srcCompat="@drawable/eraser" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_undo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/blueLight"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_person_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_person_fab"
+            app:srcCompat="@drawable/undo" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_redo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/blueLight"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_person_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_person_fab"
+            app:srcCompat="@drawable/redo" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/red"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_person_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_person_fab"
+            app:srcCompat="@drawable/bin" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_hide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/blueLight"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_person_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_person_fab"
+            app:srcCompat="@drawable/view" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/skin"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
+            app:layout_constraintEnd_toEndOf="@+id/add_person_fab"
+            app:layout_constraintStart_toStartOf="@+id/add_person_fab"
+            app:srcCompat="@drawable/logout" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package eu.tutorials.kidsdrawingapp
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,28 +9,34 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
-import androidx.lifecycle.lifecycleScope
+import eu.tutorials.kidsdrawingapp.model.ListItemModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import top.defaults.colorpicker.ColorPickerPopup
 import java.io.ByteArrayOutputStream
+
 import java.io.File
 import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
-    private var drawingView: DrawingView? = null
     private var mImageButtonCurrentPaint: ImageButton? = null // A variable for current color is picked from color pallet.
+    private val REQUEST_OVERLAY_PERMISSION = 1001
 
     var customProgressDialog: Dialog? = null
 
@@ -37,13 +44,13 @@ class MainActivity : AppCompatActivity() {
 //Todo 2: create an activity result launcher to open an intent
     val openGalleryLauncher:ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result->
     //Todo 3: get the returned result from the lambda and check the resultcode and the data returned
-    if (result.resultCode == RESULT_OK && result.data != null){
-            //process the data
-                //Todo 4 if the data is not null reference the imageView from the layout
-            val imageBackground:ImageView = findViewById(R.id.iv_background)
-        //Todo 5: set the imageuri received
-            imageBackground.setImageURI(result.data?.data)
-        }
+//    if (result.resultCode == RESULT_OK && result.data != null){
+//            //process the data
+//                //Todo 4 if the data is not null reference the imageView from the layout
+//            val imageBackground:ImageView = findViewById(R.id.iv_background)
+//        //Todo 5: set the imageuri received
+//            imageBackground.setImageURI(result.data?.data)
+//        }
     }
 
     /** create an ActivityResultLauncher with MultiplePermissions since we are requesting
@@ -82,106 +89,120 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    @SuppressLint("MissingInflatedId")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        drawingView = findViewById(R.id.drawing_view)
-        val ibBrush: ImageButton = findViewById(R.id.ib_brush)
-        drawingView?.setSizeForBrush(20.toFloat())
-        val linearLayoutPaintColors = findViewById<LinearLayout>(R.id.ll_paint_colors)
-        mImageButtonCurrentPaint = linearLayoutPaintColors[1] as ImageButton
-        mImageButtonCurrentPaint?.setImageDrawable(
-            ContextCompat.getDrawable(
-                this,
-                R.drawable.pallet_pressed
-            )
-        )
-        ibBrush.setOnClickListener {
-            showBrushSizeChooserDialog()
+     //   setSupportActionBar(findViewById(R.id.toolbar))
+        val listView : ListView = findViewById(R.id.listView)
+        val dataList = mutableListOf<ListItemModel>()
+
+        dataList.add(ListItemModel(R.drawable.settings, "Display setting icon", "back to setting when draw", true))
+        dataList.add(ListItemModel(R.drawable.undo, "Display undo button", "", true))
+        dataList.add(ListItemModel(R.drawable.redo, "Display redo button", "", false))
+        dataList.add(ListItemModel(R.drawable.interests, "Display shape button", "", true))
+        dataList.add(ListItemModel(R.drawable.info, "Application introduction", "", false))
+
+        val adapter = SettingsAdapter(this,dataList)
+        listView.adapter = adapter
+        val buttonCLick : Button = findViewById(R.id.btnPlay)
+        buttonCLick.setOnClickListener{
+            checkOverlayPermission()
         }
-        val ibGallery: ImageButton = findViewById(R.id.ib_gallery)
-        ibGallery.setOnClickListener {
-            requestStoragePermission()
-        }
-        val ibUndo: ImageButton = findViewById(R.id.ib_undo)
-        ibUndo.setOnClickListener {
-            // This is for undo recent stroke.
-            drawingView?.onClickUndo()
-        }
-            //reference the save button from the layout
-        val ibSave:ImageButton = findViewById(R.id.ib_save)
-              //set onclick listener
-        ibSave.setOnClickListener{
-               //check if permission is allowed
-            if (isReadStorageAllowed()){
-                showProgressDialog()
-             //launch a coroutine block
-                lifecycleScope.launch{
-               //reference the frame layout
-                    val flDrawingView:FrameLayout = findViewById(R.id.fl_drawing_view_container)
-                  //Save the image to the device
-                    saveBitmapFile(getBitmapFromView(flDrawingView))
-                }
-            }
-        }
+
+//
+//        val linearLayoutPaintColors = findViewById<LinearLayout>(R.id.ll_paint_colors)
+//        mImageButtonCurrentPaint = linearLayoutPaintColors[1] as ImageButton
+//        mImageButtonCurrentPaint?.setImageDrawable(
+//            ContextCompat.getDrawable(
+//                this,
+//                R.drawable.pallet_pressed
+//            )
+//        )
+
+
+
+
+//            //reference the save button from the layout
+//        val ibSave:ImageButton = findViewById(R.id.ib_save)
+//              //set onclick listener
+//        ibSave.setOnClickListener{
+//               //check if permission is allowed
+//            if (isReadStorageAllowed()){
+//                showProgressDialog()
+//             //launch a coroutine block
+//                lifecycleScope.launch{
+//               //reference the frame layout
+//                    val flDrawingView:FrameLayout = findViewById(R.id.fl_drawing_view_container)
+//                  //Save the image to the device
+//                    saveBitmapFile(getBitmapFromView(flDrawingView))
+//                }
+//            }
+//        }
+       // startForegroundService(Intent(this, DrawService::class.java))
+
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.custom_menu,menu);
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.nav_settings){
+            Toast.makeText(this, "Clicked Settings Icon..", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item)
+    }
     /**
      * Method is used to launch the dialog to select different brush sizes.
      */
-    private fun showBrushSizeChooserDialog() {
-        val brushDialog = Dialog(this)
-        brushDialog.setContentView(R.layout.dialog_brush_size)
-        brushDialog.setTitle("Brush size :")
-        val smallBtn: ImageButton = brushDialog.findViewById(R.id.ib_small_brush)
-        smallBtn.setOnClickListener(View.OnClickListener {
-            drawingView?.setSizeForBrush(10.toFloat())
-            brushDialog.dismiss()
-        })
-        val mediumBtn: ImageButton = brushDialog.findViewById(R.id.ib_medium_brush)
-        mediumBtn.setOnClickListener(View.OnClickListener {
-            drawingView?.setSizeForBrush(20.toFloat())
-            brushDialog.dismiss()
-        })
-
-        val largeBtn: ImageButton = brushDialog.findViewById(R.id.ib_large_brush)
-        largeBtn.setOnClickListener(View.OnClickListener {
-            drawingView?.setSizeForBrush(30.toFloat())
-            brushDialog.dismiss()
-        })
-        brushDialog.show()
-    }
 
     /**
      * Method is called when color is clicked from pallet_normal.
      *
      * @param view ImageButton on which click took place.
      */
-    fun paintClicked(view: View) {
-        if (view !== mImageButtonCurrentPaint) {
-            // Update the color
-            val imageButton = view as ImageButton
-            // Here the tag is used for swaping the current color with previous color.
-            // The tag stores the selected view
-            val colorTag = imageButton.tag.toString()
-            // The color is set as per the selected tag here.
-            drawingView?.setColor(colorTag)
-            // Swap the backgrounds for last active and currently active image button.
-            imageButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.pallet_pressed))
-            mImageButtonCurrentPaint?.setImageDrawable(
-                ContextCompat.getDrawable(
-                    this,
-                    R.drawable.pallet_normal
-                )
-            )
-
-            //Current view is updated with selected view in the form of ImageButton.
-            mImageButtonCurrentPaint = view
-        }
-    }
     /**
      * We are calling this method to check the permission status
      */
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Toast.makeText(
+                this,
+                "We need permission Display over other apps to work well",
+                Toast.LENGTH_SHORT
+            ).show()
+            // Yêu cầu cấp phép từ người dùng
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+            intent.data = Uri.parse("package:" + packageName)
+
+            startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION)
+        } else {
+            //   startService(Intent(this, com.draw.cameraSerectRecord.FloatingWidgetService::class.java))
+
+            // Quyền đã được cấp phép hoặc hệ thống Android không yêu cầu quyền
+            val svc = Intent(this, DrawService::class.java)
+            startForegroundService(svc)
+
+            val aaa = Intent(this, DrawTestService::class.java)
+            startForegroundService(aaa)
+//            val aa = Intent(this, DrawService::class.java)
+//            aa.putExtra("height", 200) // Replace heightValue with the actual height value
+//            aa.putExtra("weight", 200)
+//            startForegroundService(aa)
+            finish()
+        }
+    }
+
     private fun isReadStorageAllowed(): Boolean {
         //Getting the permission status
         // Here the checkSelfPermission is
@@ -205,30 +226,6 @@ class MainActivity : AppCompatActivity() {
         return result == PackageManager.PERMISSION_GRANTED
     }
 //create a method to requestStorage permission
-    private fun requestStoragePermission(){
-    // Check if the permission was denied and show rationale
-        if (
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)
-        ){
-            //call the rationale dialog to tell the user why they need to allow permission request
-            showRationaleDialog("Kids Drawing App","Kids Drawing App " +
-                    "needs to Access Your External Storage")
-        }
-        else {
-            // You can directly ask for the permission.
-            //if it has not been denied then request for permission
-                //  The registered ActivityResultCallback gets the result of this request.
-            requestPermission.launch(
-                arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            )
-        }
-
-    }
     /**  create rationale dialog
      * Shows rationale dialog for displaying why the app needs permission
      * Only shown if the user has denied the permission request previously

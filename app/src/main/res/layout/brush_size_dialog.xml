@@ -1,0 +1,46 @@
+<!-- res/layout/brush_size_dialog.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <SeekBar
+        android:id="@+id/seekBarBrushSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:max="100"
+        android:min="1"
+
+        android:progress="10" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        tools:ignore="ExtraText">
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+
+        android:text="Cancel" />
+
+        <Space
+            android:layout_width="16dp"
+        android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/buttonApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+
+        android:text="Apply" />
+    </LinearLayout>
+
+</LinearLayout>
