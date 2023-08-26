@@ -94,7 +94,6 @@ class DrawTestService : Service() {
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.floating_button, null)
         drawingView = mFloatingView!!.findViewById(R.id.drawing_view)
         mAddFab = mFloatingView!!.findViewById(R.id.add_fab)
-        var ll_action_buttons = mFloatingView!!.findViewById(R.id.layout) as ConstraintLayout
 
 
         // FAB button
@@ -177,10 +176,7 @@ class DrawTestService : Service() {
                 // visibility to GONE
                 true
             } else {
-
-                // when isAllFabsVisible becomes
-                // true make all the action name
-                // texts and FABs GONE.
+                
                 mPenFab!!.hide()
                 mPickColorFab!!.hide()
                 mPickSharpFab!!.hide()
