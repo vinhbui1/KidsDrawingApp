@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blueLight"
     android:id="@+id/layout"
 
 
@@ -56,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:backgroundTint="@color/pink"
+            app:backgroundTint="@color/pink"
             app:fabSize="normal"
             app:layout_constraintBottom_toTopOf="@+id/add_person_fab"
             app:layout_constraintEnd_toEndOf="@+id/add_person_fab"

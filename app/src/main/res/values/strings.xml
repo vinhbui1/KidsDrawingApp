@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kids Drawing App</string>
+    <string name="app_name">Draw on Your Screen</string>
     <string name="app_title">Draw on Screen</string>
     <string name="settings">Settings</string>
     <string name="start">Start</string>
@@ -17,4 +17,14 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="next">Next</string>
+        <string name="discover">Overlay Draw</string>
+        <string name="shop">Brush Size</string>
+        <string name="offers">Color</string>
+        <string name="rewards">More Feature</string>
+        <string name="discover_text">Draw and write overlay any where on screen</string>
+        <string name="shop_text">Easy change brush size</string>
+        <string name="offers_text">Easy change color</string>
+        <string name="rewards_text">Undo,redo,delete,hide draw ...</string>
+        <string name="get_started">Get Started</string>
 </resources>
