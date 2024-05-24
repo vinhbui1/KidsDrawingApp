@@ -24,6 +24,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -79,10 +80,6 @@ class DrawTestService : Service() {
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= 26) {
-
-
-
-
             var intentRegig = Intent(this, MainActivity::class.java)
             intentRegig.action = "custom_action"
             val contentIntent =
@@ -144,6 +141,9 @@ class DrawTestService : Service() {
         drawingView?.setSizeForBrush(20.toFloat())
         val desiredWidth = WindowManager.LayoutParams.WRAP_CONTENT
         val desiredHeight = WindowManager.LayoutParams.WRAP_CONTENT
+        Log.e("aaaa11111", desiredWidth.toString())
+        Log.e("aaaa11111weight", desiredHeight.toString())
+
         var window = getSystemService(WINDOW_SERVICE) as WindowManager
         val displayMetrics = window?.currentWindowMetrics?.bounds
         sharedPreferences =
@@ -265,7 +265,6 @@ class DrawTestService : Service() {
             sendBroadcast(intent)
             if (isChooseErase) {
                 showEraseSizeChooserDialog()
-                Log.e("aaaa", isChooseErase.toString())
             }
             isChooseErase = true
             isPen = false

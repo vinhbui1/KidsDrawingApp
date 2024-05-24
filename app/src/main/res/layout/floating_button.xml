@@ -2,19 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:id="@+id/layout"
 
 
     android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
     android:theme="@style/customTheme">
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/ll_action_buttons"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
 
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -135,6 +138,6 @@
             app:srcCompat="@drawable/logout" />
 
     </LinearLayout>
-
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,15 +1,22 @@
 package eu.on.screen
 
+import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import eu.on.screen.model.EraseData
 import kotlin.math.abs
 
+
 class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+
     private var mDrawPath: CustomPath? =
         null // An variable of CustomPath inner class to use it further.
     private var mCanvasBitmap: Bitmap? = null // An instance of the Bitmap.
@@ -45,14 +52,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     var startX = 0.0F// Touch event of X coordinate
     var startY = 0.0F // touch event of Y coordinate
 
-    /**
-     * A variable for canvas which will be initialized later and used.
-     *
-     *The Canvas class holds the "draw" calls. To draw something, you need 4 basic components: A Bitmap to hold the pixels, a Canvas to host
-     * the draw calls (writing into the bitmap), a drawing primitive (e.g. Rect,
-     * Path, text, Bitmap), and a paint (to describe the colors and styles for the
-     * drawing)
-     */
+
     private var canvas: Canvas? = null
 
     private val mPaths = ArrayList<CustomPath>() // ArrayList for Paths
@@ -63,10 +63,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         setUpDrawing()
     }
 
-    /**
-     * This method initializes the attributes of the
-     * ViewForDrawing class.
-     */
     private fun setUpDrawing() {
         mDrawPaint = Paint()
         mDrawPath = CustomPath(color, mBrushSize)
@@ -79,11 +75,54 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
     }
 
-    override fun onSizeChanged(w: Int, h: Int, wprev: Int, hprev: Int) {
-        super.onSizeChanged(w, h, wprev, hprev)
-        mCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        canvas = Canvas(mCanvasBitmap!!)
-    }
+//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+//        // Measure the width and height of the view
+//        val width = MeasureSpec.getSize(widthMeasureSpec)
+//        val height = MeasureSpec.getSize(heightMeasureSpec)
+//        Log.e("231", width.toString() + "width")
+//        Log.e("231", height.toString())
+//
+//        // Set the measured dimensions to maintain aspect ratio or customize as needed
+//        setMeasuredDimension(width, height)
+//    }
+
+//    override fun onSizeChanged(w: Int, h: Int, wprev: Int, hprev: Int) {
+//        super.onSizeChanged(w, h, wprev, hprev)
+//
+//        Log.e("231", "size change carll sercond")
+//
+//        // Recreate the bitmap and canvas with the new width and height
+//        mCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+//        canvas = Canvas(mCanvasBitmap!!)
+//    }
+
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//
+//        val width =  Resources.getSystem().displayMetrics.widthPixels;
+//        val height =  Resources.getSystem().displayMetrics.heightPixels;
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//
+////            Log.e("231", width.toString())
+////            Log.e("231", height.toString())
+////
+////            Log.e("231", "ngang")
+//
+//
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//           // Log.e("231", "doc")
+////            val width =  Resources.getSystem().displayMetrics.widthPixels;
+////            val height =  Resources.getSystem().displayMetrics.heightPixels;
+////            Log.e("231", width.toString())
+////            Log.e("231", height.toString())
+//        }
+//        Log.e("231", width.toString() + "width")
+//        Log.e("231", height.toString()+ "height")
+//        mCanvasBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+//        canvas = Canvas(mCanvasBitmap!!)
+//        // Request a layout pass to ensure that the view gets redrawn with the new dimensions
+//        requestLayout()
+//    }
 
 
     /**
@@ -308,13 +347,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         // 2 is Circle
         // 3 is Rectangle
     }
-
-    /**
-     * This function is called when the user selects the undo
-     * command from the application. This function removes the
-     * last stroke input by the user depending on the
-     * number of times undo has been activated.
-     */
     fun onClickUndo() {
         if (mPaths.size > 0) {
             val remove = listEarse
