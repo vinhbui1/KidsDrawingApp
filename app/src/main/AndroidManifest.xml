@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="eu.on.screen">
-
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" android:maxSdkVersion="34" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
@@ -27,16 +28,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="eu.on.screen.ColorPickerActivity"
 
+            android:exported="true">
+
+        </activity>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9807820378544612~1021512326"/>
         <service
             android:name="eu.on.screen.DrawService"
+            android:foregroundServiceType="specialUse"
             android:enabled="true"
             android:configChanges="orientation|screenSize"
             android:exported="true" />
-        <service
-            android:name=".DrawTestService"
-            android:enabled="true"
-            android:exported="true" />
+
+        <service android:name=".DrawTestService" android:foregroundServiceType="specialUse" android:enabled="true"
+            android:exported="true">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="explanation_for_special_use"/>
+        </service>
 
         <activity
             android:name=".MainActivity"

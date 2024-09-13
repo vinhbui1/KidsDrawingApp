@@ -32,21 +32,57 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.codemybrainsout.ratingdialog.RatingDialog
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import eu.on.screen.model.ListItemModel
 import eu.on.screen.R
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-
+import com.google.android.gms.ads.appopen.AppOpenAd
+import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
 class MainActivity : AppCompatActivity() {
     private val REQUEST_OVERLAY_PERMISSION = 1001
     private var isServiceRunning = false
     lateinit var buttonCLick: ExtendedFloatingActionButton
     private var sharedPreferences: SharedPreferences? = null
     var editor: SharedPreferences.Editor? = null
+    private lateinit var adView: AdView
+    private lateinit var appOpenManager: AppOpenManager
+
+    private var appOpenAd: AppOpenAd? = null
+
+    private var isAdDisplayed: Boolean = false
+    private val appOpenAdLoadCallback = object : AppOpenAdLoadCallback() {
+        override fun onAdLoaded(ad: AppOpenAd) {
+            appOpenAd = ad // Initialize the appOpenAd property here
+         //   appOpenAd!!.show(this@MainActivity)
+        }
+
+        override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+            // Handle ad loading failure
+        }
+    }
+
+    private fun loadAppOpenAd() {
+        val adRequest = AdRequest.Builder().build()
+        AppOpenAd.load(
+            this,
+            "/21849154601,23155531379/Ad.Plus-APP-APPOpen",
+            adRequest,
+            AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
+            appOpenAdLoadCallback
+        )
+    }
+
+
 
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -63,6 +99,22 @@ class MainActivity : AppCompatActivity() {
             .build()
         actionBar?.show()
         setContentView(R.layout.activity_main)
+        val backgroundScope = CoroutineScope(Dispatchers.IO)
+        MobileAds.initialize(this) {}
+        loadAppOpenAd()
+
+        backgroundScope.launch {
+            // Initialize the Google Mobile Ads SDK on a background thread.
+            MobileAds.initialize(this@MainActivity) {}
+        }
+        // Find the AdView as defined in the layout XML
+        adView = findViewById(R.id.adView)
+
+        // Create an ad request
+        val adRequest = AdRequest.Builder().build()
+
+        // Load the ad into the AdView
+        adView.loadAd(adRequest)
         //   setSupportActionBar(findViewById(R.id.toolbar))
         val listView: ListView = findViewById(R.id.listView)
         val dataList = mutableListOf<ListItemModel>()
@@ -162,7 +214,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
+        if (isAdDisplayed) {
+            // Do not show the ad if it's already displayed
+            return
+        }
+        appOpenAd?.let {
+            it.show(this)
+        } ?: run {
+            // If the ad is null, load it again
+            loadAppOpenAd()
+        }
         isServiceRunning = isServiceRunning(this, DrawService::class.java)
 
         if (isServiceRunning) {

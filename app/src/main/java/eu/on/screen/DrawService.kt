@@ -1,6 +1,5 @@
 package eu.on.screen
 
-import android.R
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,18 +12,15 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 
 
@@ -53,6 +49,7 @@ class DrawService : Service() {
         return null
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         sharedPreferences =
@@ -103,14 +100,6 @@ class DrawService : Service() {
         params.width = widthInPixels
         params.height = heightInPixels
 
-
-//        val params = WindowManager.LayoutParams(
-//            widthInPixels!!.toInt(),
-//            heightInPixels!!.toInt(),
-//            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-//            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-//            PixelFormat.TRANSLUCENT
-//        )
          receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action.equals("action.hideDraw")) {
@@ -174,7 +163,8 @@ class DrawService : Service() {
         intentFilter.addAction("action.undo") // Action2 to filter
         intentFilter.addAction("action.redo") // Action2 to filter
         intentFilter.addAction("action.delete") // Action2 to filter
-        registerReceiver(receiver, IntentFilter(intentFilter))
+        registerReceiver(receiver, IntentFilter(intentFilter), RECEIVER_EXPORTED
+        )
 
         mWindowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         mWindowManager!!.addView(mFloatingView, params)
@@ -183,29 +173,11 @@ class DrawService : Service() {
     }
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-
         val width =  Resources.getSystem().displayMetrics.widthPixels;
         val height =  Resources.getSystem().displayMetrics.heightPixels;
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-//            Log.e("231", width.toString())
-//            Log.e("231", height.toString())
-//
-//            Log.e("231", "ngang")
-
-
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-        // Log.e("231", "doc")
-//            val width =  Resources.getSystem().displayMetrics.widthPixels;
-//            val height =  Resources.getSystem().displayMetrics.heightPixels;
-//            Log.e("231", width.toString())
-//            Log.e("231", height.toString())
-        }
         params.width = width
         params.height = height
         mWindowManager!!.updateViewLayout(mFloatingView, params)
-
-
     }
 
     override fun onDestroy() {

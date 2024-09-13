@@ -1,5 +1,6 @@
 package eu.on.screen
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,9 +10,9 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import android.view.Gravity
@@ -24,23 +25,28 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import top.defaults.colorpicker.ColorPickerPopup;
+import eu.on.screen.ViewModel.HideDrawViewModel
+import yuku.ambilwarna.AmbilWarnaDialog
+import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener
 
 
 class DrawTestService : Service() {
+    private val handler: Handler = Handler()
+    private lateinit var viewModel: HideDrawViewModel
+
     private var drawingView: DrawingView? = null
     private var mWindowManager: WindowManager? = null
     private var mFloatingView: View? = null
     var height: Int? = null
-    var hideDraw: Boolean = false
+   // var hideDraw: Boolean = false
     var isAllFabsVisible: Boolean? = null
     var mPenFab: FloatingActionButton? = null
     var mPickColorFab: FloatingActionButton? = null
@@ -76,9 +82,13 @@ class DrawTestService : Service() {
 
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate() {
         super.onCreate()
+        setTheme(R.style.customTheme); // (for Custom theme)
+        viewModel = HideDrawViewModel.getInstance()
+
         if (Build.VERSION.SDK_INT >= 26) {
             var intentRegig = Intent(this, MainActivity::class.java)
             intentRegig.action = "custom_action"
@@ -220,45 +230,67 @@ class DrawTestService : Service() {
         }
 
         mPickColorFab!!.setOnClickListener { v ->
-            ColorPickerPopup.Builder(this@DrawTestService).initialColor(
-                Color.RED
-            )
-                .enableBrightness(
-                    true
-                ) // enable color brightness
-                // slider or not
-                .enableAlpha(
-                    true
-                ) // enable color alpha
-                // changer on slider or
-                // not
-                .okTitle(
-                    "Choose"
-                ) // this is top right
-                // Choose button
-                .cancelTitle(
-                    "Cancel"
-                ) // this is top left
-                // Cancel button which
-                // closes the
-                .showIndicator(
-                    true
-                ) // this is the small box
-                .build()
-                .show(
-                    v,
-                    object : ColorPickerPopup.ColorPickerObserver() {
-                        override fun onColorPicked(color: Int) {
-                            val intent = Intent("action.PickColor")
-                            intent.putExtra("pickColor", color)
-                            sendBroadcast(intent)
+            val intent = Intent("action.hideDraw")
+          //  hideDraw = true
+            intent.putExtra("hideDraw", true)
+            sendBroadcast(intent)
+            val colorPickerIntent = Intent(this, ColorPickerActivity::class.java)
+            colorPickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(colorPickerIntent)
 
-                            //    mDefaultColor = color
-
-                            //       mColorPreview.setBackgroundColor(mDefaultColor)
-                        }
-                    })
+//            ColorPickerDialog
+//                .Builder(this)        				// Pass Activity Instance
+//                .setTitle("Pick Theme")           	// Default "Choose Color"
+//                .setColorShape(ColorShape.SQAURE)   // Default ColorShape.CIRCLE
+//                .setDefaultColor(mDefaultColor)     // Pass Default Color
+//                .setColorListener { color, colorHex ->
+//                    // Handle Color Selection
+//                }
+//                .show()
+//            Color.Builder(this).show()
+//            ColorPickerView.Builder(this)
         }
+
+//        mPickColorFab!!.setOnClickListener { v ->
+//            ColorPickerPopup.Builder(this@DrawTestService).initialColor(
+//                Color.RED
+//            )
+//                .enableBrightness(
+//                    true
+//                ) // enable color brightness
+//                // slider or not
+//                .enableAlpha(
+//                    true
+//                ) // enable color alpha
+//                // changer on slider or
+//                // not
+//                .okTitle(
+//                    "Choose"
+//                ) // this is top right
+//                // Choose button
+//                .cancelTitle(
+//                    "Cancel"
+//                ) // this is top left
+//                // Cancel button which
+//                // closes the
+//                .showIndicator(
+//                    true
+//                ) // this is the small box
+//                .build()
+//                .show(
+//                    v,
+//                    object : ColorPickerPopup.ColorPickerObserver() {
+//                        override fun onColorPicked(color: Int) {
+//                            val intent = Intent("action.PickColor")
+//                            intent.putExtra("pickColor", color)
+//                            sendBroadcast(intent)
+//
+//                            //    mDefaultColor = color
+//
+//                            //       mColorPreview.setBackgroundColor(mDefaultColor)
+//                        }
+//                    })
+//        }
         mEarseFab!!.setOnClickListener {
             showToast(this, "Eraser Clicked")
             intent.putExtra("pickShape", 5)
@@ -278,7 +310,7 @@ class DrawTestService : Service() {
         mExits!!.setOnClickListener {
 
             val intentHide = Intent("action.hideDraw")
-            hideDraw = true
+           // hideDraw = true
             intentHide.putExtra("hideDraw", true)
             sendBroadcast(intentHide)
 
@@ -293,7 +325,7 @@ class DrawTestService : Service() {
             showToast(this, "Draw Pen Clicked")
 
                 val intentHide = Intent("action.hideDraw")
-                hideDraw = false
+            //    hideDraw = false
                 intentHide.putExtra("hideDraw", false)
                 sendBroadcast(intentHide)
 
@@ -335,7 +367,8 @@ class DrawTestService : Service() {
 
         }
         mHide!!.setOnClickListener {
-            if (hideDraw) {
+            println("check print")
+            if (viewModel.hideDraw.value == true) {
                 showToast(this, "Show Pen Clicked")
 
                 mHide!!.setImageResource(R.drawable.view)
@@ -349,8 +382,8 @@ class DrawTestService : Service() {
 
             // This is for undo recent stroke.
             val intent = Intent("action.hideDraw")
-            hideDraw = !hideDraw
-            intent.putExtra("hideDraw", hideDraw)
+            viewModel.setHideDraw()
+            intent.putExtra("hideDraw", viewModel.hideDraw.value)
             sendBroadcast(intent)
             // mFloatingView?.visibility = View.INVISIBLE
             //    drawingView?.onClickUndo()
@@ -402,10 +435,10 @@ class DrawTestService : Service() {
                         // Apply the animation for scale-down
                         val scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale_down)
                         mAddFab!!.startAnimation(scaleAnimation)
-                        if (event.rawX < fullWidth / 2) {
+                        if (event.rawX < fullWidth!! / 2) {
                             params.x = 10
                         } else {
-                            params.x = fullWidth
+                            params.x = fullWidth!!
                         }
                         val animation = AnimationUtils.loadAnimation(this, R.anim.slide_animation)
                         mFloatingView!!.startAnimation(animation)
@@ -475,7 +508,29 @@ class DrawTestService : Service() {
 
         brushDialog.show()
     }
+    private fun showColorPickerDialog() {
+        // Ensure the dialog is shown on the main thread
+        handler.post(Runnable {
+            // Create and show the AmbilWarnaDialog
+            val initialColor = -0x996634 // Default color
+            AmbilWarnaDialog(this@DrawTestService, initialColor, object : OnAmbilWarnaListener {
+                override fun onOk(dialog: AmbilWarnaDialog, color: Int) {
+                    // Handle the selected color
+                    Toast.makeText(
+                        this@DrawTestService,
+                        "Selected color: #" + Integer.toHexString(color),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
+                override fun onCancel(dialog: AmbilWarnaDialog) {
+                    // Handle the cancel event
+                    Toast.makeText(this@DrawTestService, "Color picker canceled", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }).show()
+        })
+    }
     private fun showEraseSizeChooserDialog() {
 
         val brushDialog = Dialog(this@DrawTestService)

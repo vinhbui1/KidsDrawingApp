@@ -75,67 +75,11 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
     }
 
-//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-//        // Measure the width and height of the view
-//        val width = MeasureSpec.getSize(widthMeasureSpec)
-//        val height = MeasureSpec.getSize(heightMeasureSpec)
-//        Log.e("231", width.toString() + "width")
-//        Log.e("231", height.toString())
-//
-//        // Set the measured dimensions to maintain aspect ratio or customize as needed
-//        setMeasuredDimension(width, height)
-//    }
-
-//    override fun onSizeChanged(w: Int, h: Int, wprev: Int, hprev: Int) {
-//        super.onSizeChanged(w, h, wprev, hprev)
-//
-//        Log.e("231", "size change carll sercond")
-//
-//        // Recreate the bitmap and canvas with the new width and height
-//        mCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-//        canvas = Canvas(mCanvasBitmap!!)
-//    }
-
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//
-//        val width =  Resources.getSystem().displayMetrics.widthPixels;
-//        val height =  Resources.getSystem().displayMetrics.heightPixels;
-//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//
-////            Log.e("231", width.toString())
-////            Log.e("231", height.toString())
-////
-////            Log.e("231", "ngang")
-//
-//
-//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//           // Log.e("231", "doc")
-////            val width =  Resources.getSystem().displayMetrics.widthPixels;
-////            val height =  Resources.getSystem().displayMetrics.heightPixels;
-////            Log.e("231", width.toString())
-////            Log.e("231", height.toString())
-//        }
-//        Log.e("231", width.toString() + "width")
-//        Log.e("231", height.toString()+ "height")
-//        mCanvasBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-//        canvas = Canvas(mCanvasBitmap!!)
-//        // Request a layout pass to ensure that the view gets redrawn with the new dimensions
-//        requestLayout()
-//    }
-
-
-    /**
-     * This method is called when a stroke is drawn on the canvas
-     * as a part of the painting.
-     */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         mCanvasBitmap?.let {
             canvas.drawBitmap(it, 0f, 0f, null)
         }
-
-
 
         for ((index,p) in mPaths.withIndex()) {
             mDrawPaint?.strokeWidth = p.brushThickness
@@ -160,12 +104,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             canvas.drawPath(mDrawPath!!, if (typeDrawing == 5) erasePaint else mDrawPaint!!)
         }
     }
-
-    /**
-     * This method acts as an event listener when a touch
-     * event is detected on the device.
-     */
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val touchX = event.x // Touch event of X coordinate
         val touchY = event.y // touch event of Y coordinate
@@ -292,11 +230,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         return true
     }
 
-    /**
-     * This method is called when either the brush or the eraser
-     * sizes are to be changed. This method sets the brush/eraser
-     * sizes to the new values depending on user selection.
-     */
     fun setSizeForBrush(newSize: Float) {
         mBrushSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, newSize,
@@ -319,12 +252,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         )
         erasePaint!!.strokeWidth = mBrushSizeErase
     }
-    /**
-     * This function is called when the user desires a color change.
-     * This functions sets the color of a store to selected color and able to draw on view using that color.
-     *
-     * @param newColor
-     */
+
     fun setColor(newColor: Int) {
         val alpha = Color.alpha(newColor)
         val red = Color.red(newColor)
