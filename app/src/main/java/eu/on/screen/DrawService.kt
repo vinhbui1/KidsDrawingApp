@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.content.pm.ServiceInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.PixelFormat
@@ -80,7 +81,17 @@ class DrawService : Service() {
                 .setSmallIcon(eu.on.screen.R.drawable.ic_brush)
                 .setContentIntent(contentIntent)
                 .build()
-            startForeground(1, notification)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // API 29+
+                startForeground(
+                    1,
+                    notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                )
+            } else {
+                startForeground(1, notification)
+            }
+
         }
 
         var widthInPixels: Int = applicationContext.resources.displayMetrics.widthPixels

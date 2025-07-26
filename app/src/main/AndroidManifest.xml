@@ -3,9 +3,9 @@
     package="eu.on.screen">
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" android:maxSdkVersion="34" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
@@ -39,12 +39,14 @@
             android:value="ca-app-pub-9807820378544612~1021512326"/>
         <service
             android:name="eu.on.screen.DrawService"
-            android:foregroundServiceType="specialUse"
             android:enabled="true"
             android:configChanges="orientation|screenSize"
+            android:foregroundServiceType="specialUse"
             android:exported="true" />
 
-        <service android:name=".DrawTestService" android:foregroundServiceType="specialUse" android:enabled="true"
+        <service android:name=".DrawTestService"  android:enabled="true"
+            android:foregroundServiceType="specialUse"
+
             android:exported="true">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="explanation_for_special_use"/>
